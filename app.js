@@ -9,6 +9,12 @@ var usersRouter = require('./routes/users');
 var endpointRouter = require('./routes/endpoint')
 var analyzerRouter = require('./routes/analyzer')
 
+analyzerRouter.readResult(function(err) {
+	if (err) {
+		console.log("read result error:" + err);
+	}
+});
+
 var app = express();
 
 // view engine setup
