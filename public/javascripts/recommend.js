@@ -43,7 +43,7 @@ $(document).ready(function() {
             type: 'GET',
             data: JSON.stringify(data),
             contentType: 'application/json',
-            url: 'http://localhost:3000/endpoint/search_user?userId=' + userId,
+            url: '/endpoint/search_user?userId=' + userId,
             success: function(raw) {
                 respData = JSON.parse(raw)
                 console.log(JSON.stringify(respData));
@@ -73,7 +73,7 @@ $(document).ready(function() {
             type: 'GET',
             data: JSON.stringify(data),
             contentType: 'application/json',
-            url: 'http://localhost:3000/endpoint/search_item?itemId=' + itemId,
+            url: '/endpoint/search_item?itemId=' + itemId,
             success: function(raw) {
                 respData = JSON.parse(raw)
                 console.log(JSON.stringify(respData));

@@ -8,7 +8,6 @@ var userMap = new Map();
 
 
 router.post('/', function(req, res, next) {
-    console.log('body' + req.body);
     readResult();
     res.send(JSON.stringify(userMap));
 });
@@ -57,15 +56,15 @@ router.get('/search_user', function(req, res, next) {
 });
 
 function execRAnalyzer(callback) {
-    const { exec } = require('child_process');
-    exec('cd ranalyzer && Rscript main.R', (err, stdout, stderr) => {
+    var cp = require('child_process');
+    cp.exec('cd ranalyzer && Rscript main.R', (err, stdout, stderr) => {
         if (err) {
             callback(err);
         } else {
             callback();
         }
         // the *entire* stdout and stderr (buffered)
-        console.log(`stdout: ${stdout}`);
+        //console.log(`stdout: ${stdout}`);
         console.log(`stderr: ${stderr}`);
     });
 }
@@ -78,23 +77,26 @@ function readResult(callback) {
     } catch (err) {
         callback(err);
     }
+    userMap = new Map();
+    itemMap = new Map();
     for (i in lines) {
         var line = lines[i];
         if (!line.trim()) {
             continue
         }
         var eles = line.split(':');
-        console.log("line:" + line);
         itemId = eles[0];
         userIds = eles[1].split(',');
         itemMap[itemId] = userIds;
         for (index in userIds) {
             userId = userIds[index].replace(/\s/g, '');
-            console.log(userMap[userId] + Array.isArray(userMap[userId]));
+            //console.log(userMap[userId] + Array.isArray(userMap[userId]));
             userMap[userId] = userMap[userId] || [];
             userMap[userId].push(itemId);
         }
     }
+    module.exports.itemMap = itemMap;
+    module.exports.userMap = userMap;
     callback();
 }
 
