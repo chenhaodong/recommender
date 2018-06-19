@@ -15,35 +15,41 @@ router.post('/', function(req, res, next) {
 router.post('/upload', function(req, res, next) {
     var form = new formidable.IncomingForm();
     form.parse(req, function(err, fields, files) {
-        console.log(files.files);
-        var oldpath = files.files.path;
-        var newpath = './ranalyzer/source_data.csv';
-        fs.rename(oldpath, newpath, function(err) {
-            if (err) {
-                res.status(400);
-                res.render('error', { error: err });
-                return
-            }
-            execRAnalyzer(function(err) {
+        try {
+            console.log(files.files);
+            var oldpath = files.files.path;
+            var newpath = './ranalyzer/source_data.csv';
+            fs.rename(oldpath, newpath, function(err) {
                 if (err) {
                     res.status(400);
                     res.render('error', { error: err });
-                    res.end();
                     return
                 }
-                readResult(function(err) {
+                execRAnalyzer(function(err) {
                     if (err) {
                         res.status(400);
                         res.render('error', { error: err });
                         res.end();
                         return
-                    } else {
-                        res.write('exec success');
-                        res.end();
                     }
+                    readResult(function(err) {
+                        if (err) {
+                            res.status(400);
+                            res.render('error', { error: err });
+                            res.end();
+                            return
+                        } else {
+                            res.write('exec success');
+                            res.end();
+                        }
+                    });
                 });
             });
-        });
+        } catch (err) {
+            res.status(400);
+            res.render('error', { error: err });
+            res.end();
+        }
     });
 });
 
