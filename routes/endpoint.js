@@ -2,38 +2,45 @@ var express = require('express');
 var analyzer = require('./analyzer')
 var router = express.Router();
 
-/* GET users listing. */
-router.post('/', function(req, res, next) {
-    var items = [
-        '123455',
-        '123456',
-        '123457',
-        '123458',
-        '123459',
-        '123450',
-        '123451',
-    ]
-    var obj = { 'items': items };
-
-    console.log('body' + JSON.stringify(obj));
-    res.send(JSON.stringify(obj))
-});
-
 router.get('/search_user', function(req, res, next) {
-    var userId = req.query.userId;
-    console.log('userId: ' + userId);
-    console.log(JSON.stringify(analyzer.userMap, null, 4));
-    var itemIds = analyzer.userMap[userId];
-    var obj = { 'items': itemIds };
+    var userIdRaw = req.query.userId;
+    var itemIds = [];
+    var userIds = userIdRaw.split(',');
+    console.log('userIds: ' + userIds);
+    for (index in userIds) {
+        var userId = userIds[index];
+        console.log('userId:' + userId);
+        console.log(JSON.stringify(analyzer.userMap, null, 4));
+        if (analyzer.userMap[userId]) {
+            itemIds = itemIds.concat(analyzer.userMap[userId]);
+        }
+        console.log(itemIds);
+    }
+    uniqueItems = itemIds.filter(function(item, pos) {
+        return itemIds.indexOf(item) == pos;
+    });
+    var obj = { 'items': uniqueItems };
     res.send(JSON.stringify(obj));
 });
 
 router.get('/search_item', function(req, res, next) {
-    var itemId = req.query.itemId;
-    console.log('itemId: ' + itemId);
-    console.log(JSON.stringify(analyzer.itemMap, null, 4));
-    var userIds = analyzer.itemMap[itemId];
-    var obj = { 'users': userIds };
+    var itemIdRaw = req.query.itemId;
+    var userIds = [];
+    var itemIds = itemIdRaw.split(',');
+    console.log('itemIds: ' + itemIds);
+    for (index in itemIds) {
+        var itemId = itemIds[index];
+        console.log('itemId:' + itemId);
+        console.log(JSON.stringify(analyzer.itemMap, null, 4));
+        if (analyzer.itemMap[itemId]) {
+            userIds = userIds.concat(analyzer.itemMap[itemId]);
+        }
+        console.log(userIds);
+    }
+    uniqueUsers = userIds.filter(function(user, pos) {
+        return userIds.indexOf(user) == pos;
+    });
+    var obj = { 'users': uniqueUsers };
     res.send(JSON.stringify(obj));
 });
 

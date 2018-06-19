@@ -87,6 +87,9 @@ function readResult(callback) {
         var eles = line.split(':');
         itemId = eles[0];
         userIds = eles[1].split(',');
+        userIds = userIds.map(function(e) {
+            return e.replace(/\s/g, '');
+        });
         itemMap[itemId] = userIds;
         for (index in userIds) {
             userId = userIds[index].replace(/\s/g, '');
